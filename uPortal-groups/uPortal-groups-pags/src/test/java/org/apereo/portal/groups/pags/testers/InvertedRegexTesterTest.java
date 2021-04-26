@@ -16,6 +16,7 @@ package org.apereo.portal.groups.pags.testers;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apereo.portal.groups.pags.TestPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
@@ -25,52 +26,47 @@ import org.junit.Test;
 
 public class InvertedRegexTesterTest {
 
-    IPerson person;
-    String strAttributeName = "mail";
+	IPerson person;
+	String strAttributeName = "mail";
 
-    @Before
-    public void setUp() {
-        person = new PersonImpl();
-        person.setUserName("testuser");
+	@Before
+	public void setUp() {
+		person = new PersonImpl();
+		person.setUserName("testuser");
 
-        List<Object> emailAddresses = new ArrayList<Object>();
-        emailAddresses.add("testuser1@somewhere.com");
-        emailAddresses.add("testuser1@elsewhere.com");
-        person.setAttribute(strAttributeName, emailAddresses);
-    }
+		List<Object> emailAddresses = new ArrayList<Object>();
+		emailAddresses.add("testuser1@somewhere.com");
+		emailAddresses.add("testuser1@elsewhere.com");
+		person.setAttribute(strAttributeName, emailAddresses);
+	}
 
-    @Test
-    public void testMultivaluedAttrsRegex() {
-        InvertedRegexTester tester =
-                new InvertedRegexTester(
-                        new TestPersonAttributesGroupTestDefinition(
-                                strAttributeName, "testuser1@elsewhere.com"));
-        Assert.assertFalse(tester.test(person));
+	@Test
+	public void testMultivaluedAttrsRegex() {
+		InvertedRegexTester tester = new InvertedRegexTester(TestPersonAttributesGroupTestDefinition
+				.mockIPersonAttributesGroupTestDefinition1(strAttributeName, "testuser1@elsewhere.com"));
+		Assert.assertFalse(tester.test(person));
 
-        tester =
-                new InvertedRegexTester(
-                        new TestPersonAttributesGroupTestDefinition(
-                                strAttributeName, "testnone@notmatch.com"));
-        Assert.assertTrue(tester.test(person));
-    }
+		tester = new InvertedRegexTester(TestPersonAttributesGroupTestDefinition
+				.mockIPersonAttributesGroupTestDefinition1(strAttributeName, "testnone@notmatch.com"));
+		Assert.assertTrue(tester.test(person));
+	}
 
-    @Test
-    public void testRegexPatterns() {
-        final String fakeAttribute = "fakeAttribute";
-        InvertedRegexTester tester =
-                new InvertedRegexTester(
-                        new TestPersonAttributesGroupTestDefinition(fakeAttribute, "^02([A-D])*"));
-        person.setAttribute(fakeAttribute, "02A");
-        Assert.assertFalse(tester.test(person));
-        person.setAttribute(fakeAttribute, "02ABCD");
-        Assert.assertFalse(tester.test(person));
-        person.setAttribute(fakeAttribute, "A02D");
-        Assert.assertTrue(tester.test(person));
-        person.setAttribute(fakeAttribute, "02");
-        Assert.assertFalse(tester.test(person));
-        person.setAttribute(fakeAttribute, "02MisMatch");
-        Assert.assertTrue(tester.test(person));
-        person.setAttribute(fakeAttribute, "PatternWillNeverMatch");
-        Assert.assertTrue(tester.test(person));
-    }
+	@Test
+	public void testRegexPatterns() {
+		final String fakeAttribute = "fakeAttribute";
+		InvertedRegexTester tester = new InvertedRegexTester(TestPersonAttributesGroupTestDefinition
+				.mockIPersonAttributesGroupTestDefinition1(fakeAttribute, "^02([A-D])*"));
+		person.setAttribute(fakeAttribute, "02A");
+		Assert.assertFalse(tester.test(person));
+		person.setAttribute(fakeAttribute, "02ABCD");
+		Assert.assertFalse(tester.test(person));
+		person.setAttribute(fakeAttribute, "A02D");
+		Assert.assertTrue(tester.test(person));
+		person.setAttribute(fakeAttribute, "02");
+		Assert.assertFalse(tester.test(person));
+		person.setAttribute(fakeAttribute, "02MisMatch");
+		Assert.assertTrue(tester.test(person));
+		person.setAttribute(fakeAttribute, "PatternWillNeverMatch");
+		Assert.assertTrue(tester.test(person));
+	}
 }

@@ -24,39 +24,39 @@ import org.junit.Test;
 
 public class GuestUserTesterTest {
 
-    @Before
-    public void setUp() {
-        PersonFactory fac = new PersonFactory();
-        fac.init();
-    }
+	@Before
+	public void setUp() {
+		PersonFactory fac = new PersonFactory();
+		fac.init();
+	}
 
-    @Test
-    public void testGuestTrue() throws Exception {
-        GuestUserTester tester =
-                new GuestUserTester(new TestPersonAttributesGroupTestDefinition("", "true"));
-        Assert.assertTrue(tester.test(createGuestPerson()));
-        Assert.assertFalse(tester.test(createPerson()));
-    }
+	@Test
+	public void testGuestTrue() throws Exception {
+		GuestUserTester tester = new GuestUserTester(
+				TestPersonAttributesGroupTestDefinition.mockIPersonAttributesGroupTestDefinition1("", "true"));
+		Assert.assertTrue(tester.test(createGuestPerson()));
+		Assert.assertFalse(tester.test(createPerson()));
+	}
 
-    @Test
-    public void testGuestFalse() throws Exception {
-        GuestUserTester tester =
-                new GuestUserTester(new TestPersonAttributesGroupTestDefinition("", "false"));
-        Assert.assertTrue(tester.test(createPerson()));
-        Assert.assertFalse(tester.test(createGuestPerson()));
-    }
+	@Test
+	public void testGuestFalse() throws Exception {
+		GuestUserTester tester = new GuestUserTester(
+				TestPersonAttributesGroupTestDefinition.mockIPersonAttributesGroupTestDefinition1("", "false"));
+		Assert.assertTrue(tester.test(createPerson()));
+		Assert.assertFalse(tester.test(createGuestPerson()));
+	}
 
-    protected static IPerson createGuestPerson() throws Exception {
-        IPerson person = new PersonImpl();
-        person.setAttribute(IPerson.USERNAME, "guest");
+	protected static IPerson createGuestPerson() throws Exception {
+		IPerson person = new PersonImpl();
+		person.setAttribute(IPerson.USERNAME, "guest");
 
-        return person;
-    }
+		return person;
+	}
 
-    protected static IPerson createPerson() throws Exception {
-        IPerson person = new PersonImpl();
-        person.setAttribute(IPerson.USERNAME, "non_guest");
+	protected static IPerson createPerson() throws Exception {
+		IPerson person = new PersonImpl();
+		person.setAttribute(IPerson.USERNAME, "non_guest");
 
-        return person;
-    }
+		return person;
+	}
 }

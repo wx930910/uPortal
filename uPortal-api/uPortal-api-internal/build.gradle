@@ -14,3 +14,6 @@ dependencies {
     compileOnly "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
     testCompile "org.apache.portals.pluto:pluto-container-api:${plutoVersion}"
 }
+plugins {
+    id 'info.solidsoft.pitest' version '1.5.1'
+}

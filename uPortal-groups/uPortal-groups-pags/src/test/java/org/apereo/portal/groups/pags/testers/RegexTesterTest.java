@@ -20,17 +20,15 @@ import org.junit.Test;
 
 public class RegexTesterTest {
 
-    @Test
-    public void testRegexPatterns() {
-        RegexTester tester =
-                new RegexTester(
-                        new TestPersonAttributesGroupTestDefinition(
-                                "fakeAttribute", "^02([A-D])*"));
-        Assert.assertTrue(tester.test("02A"));
-        Assert.assertTrue(tester.test("02ABCD"));
-        Assert.assertFalse(tester.test("A02D"));
-        Assert.assertTrue(tester.test("02"));
-        Assert.assertFalse(tester.test("02MisMatch"));
-        Assert.assertFalse(tester.test("PatternWillNeverMatch"));
-    }
+	@Test
+	public void testRegexPatterns() {
+		RegexTester tester = new RegexTester(TestPersonAttributesGroupTestDefinition
+				.mockIPersonAttributesGroupTestDefinition1("fakeAttribute", "^02([A-D])*"));
+		Assert.assertTrue(tester.test("02A"));
+		Assert.assertTrue(tester.test("02ABCD"));
+		Assert.assertFalse(tester.test("A02D"));
+		Assert.assertTrue(tester.test("02"));
+		Assert.assertFalse(tester.test("02MisMatch"));
+		Assert.assertFalse(tester.test("PatternWillNeverMatch"));
+	}
 }

@@ -14,153 +14,22 @@
  */
 package org.apereo.portal.groups;
 
-import java.util.Set;
-import javax.naming.Name;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 
-public class MockEntityGroup implements IEntityGroup {
+public class MockEntityGroup {
 
-    private final EntityIdentifier underlyingEntityIdentifier;
-
-    public MockEntityGroup(String groupKey, Class<? extends IBasicEntity> entityType) {
-        this.underlyingEntityIdentifier = new EntityIdentifier(groupKey, entityType);
-    }
-
-    @Override
-    public Set<IEntityGroup> getAncestorGroups() throws GroupsException {
-        return null;
-    }
-
-    @Override
-    public Set<IEntityGroup> getParentGroups() throws GroupsException {
-        return null;
-    }
-
-    @Override
-    public String getKey() {
-        return null;
-    }
-
-    @Override
-    public Class<? extends IBasicEntity> getLeafType() {
-        return null;
-    }
-
-    @Override
-    public Class getType() {
-        return null;
-    }
-
-    @Override
-    public EntityIdentifier getUnderlyingEntityIdentifier() {
-        return underlyingEntityIdentifier;
-    }
-
-    @Override
-    public boolean isDeepMemberOf(IEntityGroup group) throws GroupsException {
-        return false;
-    }
-
-    @Override
-    public boolean isGroup() {
-        return false;
-    }
-
-    @Override
-    public boolean isMemberOf(IEntityGroup group) throws GroupsException {
-        return false;
-    }
-
-    @Override
-    public IEntityGroup asGroup() {
-        return null;
-    }
-
-    @Override
-    public boolean hasMembers() throws GroupsException {
-        return false;
-    }
-
-    @Override
-    public boolean contains(IGroupMember gm) throws GroupsException {
-        return false;
-    }
-
-    @Override
-    public boolean deepContains(IGroupMember gm) throws GroupsException {
-        return false;
-    }
-
-    @Override
-    public Set<IGroupMember> getChildren() throws GroupsException {
-        return null;
-    }
-
-    @Override
-    public Set<IGroupMember> getDescendants() throws GroupsException {
-        return null;
-    }
-
-    @Override
-    public void addChild(IGroupMember gm) throws GroupsException {}
-
-    @Override
-    public void delete() throws GroupsException {}
-
-    @Override
-    public String getCreatorID() {
-        return null;
-    }
-
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getLocalKey() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public Name getServiceName() {
-        return null;
-    }
-
-    @Override
-    public boolean isEditable() throws GroupsException {
-        return false;
-    }
-
-    @Override
-    public void removeChild(IGroupMember gm) throws GroupsException {}
-
-    @Override
-    public void setCreatorID(String userID) {}
-
-    @Override
-    public void setDescription(String name) {}
-
-    @Override
-    public void setName(String name) throws GroupsException {}
-
-    @Override
-    public void update() throws GroupsException {}
-
-    @Override
-    public void updateMembers() throws GroupsException {}
-
-    @Override
-    public void setLocalGroupService(IIndividualGroupService groupService) throws GroupsException {}
-
-    @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return null;
-    }
+	public static IEntityGroup mockIEntityGroup1(String groupKey, Class<? extends IBasicEntity> entityType)
+			throws GroupsException {
+		EntityIdentifier mockFieldVariableUnderlyingEntityIdentifier;
+		IEntityGroup mockInstance = mock(IEntityGroup.class);
+		mockFieldVariableUnderlyingEntityIdentifier = new EntityIdentifier(groupKey, entityType);
+		when(mockInstance.getUnderlyingEntityIdentifier()).thenAnswer((stubInvo) -> {
+			return mockFieldVariableUnderlyingEntityIdentifier;
+		});
+		return mockInstance;
+	}
 }

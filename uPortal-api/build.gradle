@@ -8,3 +8,6 @@ install {
 uploadArchives {
     enabled = false
 }
+plugins {
+    id 'info.solidsoft.pitest' version '1.5.1'
+}

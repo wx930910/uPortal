@@ -1,68 +1,39 @@
 package org.apereo.portal.groups.pags;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.dom4j.Element;
 
 /** Supports instantiating {@link IPersonTester} objects in unit tests. */
-public final class TestPersonAttributesGroupTestDefinition
-        implements IPersonAttributesGroupTestDefinition {
+public final class TestPersonAttributesGroupTestDefinition {
 
-    private final String attributeName;
-    private final String testValue;
-
-    public TestPersonAttributesGroupTestDefinition(String attributeName, String testValue) {
-        this.attributeName = attributeName;
-        this.testValue = testValue;
-    }
-
-    @Override
-    public long getId() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    @Override
-    public void setAttributeName(String attributeName) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getTesterClassName() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setTesterClassName(String className) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getTestValue() {
-        return testValue;
-    }
-
-    @Override
-    public void setTestValue(String testValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public IPersonAttributesGroupTestGroupDefinition getTestGroup() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void toElement(Element parent) {
-        throw new UnsupportedOperationException();
-    }
+	public static IPersonAttributesGroupTestDefinition mockIPersonAttributesGroupTestDefinition1(String attributeName,
+			String testValue) {
+		String mockFieldVariableTestValue;
+		String mockFieldVariableAttributeName;
+		IPersonAttributesGroupTestDefinition mockInstance = mock(IPersonAttributesGroupTestDefinition.class);
+		mockFieldVariableAttributeName = attributeName;
+		mockFieldVariableTestValue = testValue;
+		when(mockInstance.getAttributeName()).thenAnswer((stubInvo) -> {
+			return mockFieldVariableAttributeName;
+		});
+		when(mockInstance.getTesterClassName()).thenThrow(new UnsupportedOperationException());
+		when(mockInstance.getId()).thenThrow(new UnsupportedOperationException());
+		doThrow(new UnsupportedOperationException()).when(mockInstance)
+				.setTestGroup(any(IPersonAttributesGroupTestGroupDefinition.class));
+		doThrow(new UnsupportedOperationException()).when(mockInstance).toElement(any(Element.class));
+		doThrow(new UnsupportedOperationException()).when(mockInstance).setTestValue(any(String.class));
+		when(mockInstance.getTestValue()).thenAnswer((stubInvo) -> {
+			return mockFieldVariableTestValue;
+		});
+		when(mockInstance.getTestGroup()).thenThrow(new UnsupportedOperationException());
+		doThrow(new UnsupportedOperationException()).when(mockInstance).setAttributeName(any(String.class));
+		doThrow(new UnsupportedOperationException()).when(mockInstance).setTesterClassName(any(String.class));
+		return mockInstance;
+	}
 }

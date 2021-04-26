@@ -14,224 +14,126 @@
  */
 package org.apereo.portal.security.provider;
 
-import java.util.Enumeration;
-import junit.framework.TestCase;
-import org.apereo.portal.security.IAdditionalDescriptor;
-import org.apereo.portal.security.IOpaqueCredentials;
+import static org.mockito.Mockito.mock;
+
 import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.IPrincipal;
 import org.apereo.portal.security.ISecurityContext;
-import org.apereo.portal.security.PortalSecurityException;
+
+import junit.framework.TestCase;
 
 /** Testcase for RestrictedPerson. */
 public class RestrictedPersonTest extends TestCase {
 
-    private IPerson person;
+	public static ISecurityContext mockISecurityContext1() {
+		ISecurityContext mockInstance = mock(ISecurityContext.class);
+		return mockInstance;
+	}
 
-    private RestrictedPerson restrictedPerson;
+	private IPerson person;
 
-    @Override
-    protected void setUp() {
-        IPerson fullPerson = new PersonImpl();
-        fullPerson.setAttribute("att1", "val1");
-        fullPerson.setAttribute("att2", "val2");
+	private RestrictedPerson restrictedPerson;
 
-        fullPerson.setFullName("George Washington");
+	@Override
+	protected void setUp() {
+		IPerson fullPerson = new PersonImpl();
+		fullPerson.setAttribute("att1", "val1");
+		fullPerson.setAttribute("att2", "val2");
 
-        fullPerson.setID(27);
+		fullPerson.setFullName("George Washington");
 
-        fullPerson.setSecurityContext(new DummySecurityContext());
+		fullPerson.setID(27);
 
-        this.person = fullPerson;
-        this.restrictedPerson = new RestrictedPerson(fullPerson);
-    }
+		fullPerson.setSecurityContext(RestrictedPersonTest.mockISecurityContext1());
 
-    @Override
-    protected void tearDown() {
-        this.person = null;
-        this.restrictedPerson = null;
-    }
+		this.person = fullPerson;
+		this.restrictedPerson = new RestrictedPerson(fullPerson);
+	}
 
-    /** Test that getSecurityContext of RestrictedPerson returns null. */
-    public void testGetSecurityContext() {
-        assertNull(this.restrictedPerson.getSecurityContext());
-    }
+	@Override
+	protected void tearDown() {
+		this.person = null;
+		this.restrictedPerson = null;
+	}
 
-    /** Test that setSecurityContext does not change the security context. */
-    public void testSetSecurityContext() {
-        ISecurityContext baselineContext = this.person.getSecurityContext();
-        assertNotNull(baselineContext);
+	/** Test that getSecurityContext of RestrictedPerson returns null. */
+	public void testGetSecurityContext() {
+		assertNull(this.restrictedPerson.getSecurityContext());
+	}
 
-        assertNull(this.restrictedPerson.getSecurityContext());
+	/** Test that setSecurityContext does not change the security context. */
+	public void testSetSecurityContext() {
+		ISecurityContext baselineContext = this.person.getSecurityContext();
+		assertNotNull(baselineContext);
 
-        this.restrictedPerson.setSecurityContext(new DummySecurityContext());
-        assertNull(this.restrictedPerson.getSecurityContext());
+		assertNull(this.restrictedPerson.getSecurityContext());
 
-        assertSame(baselineContext, this.person.getSecurityContext());
-    }
+		this.restrictedPerson.setSecurityContext(RestrictedPersonTest.mockISecurityContext1());
+		assertNull(this.restrictedPerson.getSecurityContext());
 
-    /**
-     * Test that the getEntityIdentifier() method of RestrictedPerson reads through to the
-     * underlying IPerson's entity identifier.
-     */
-    public void testGetEntityIdentifier() {
-        assertNotNull(this.person.getEntityIdentifier());
-        assertSame(this.person.getEntityIdentifier(), this.restrictedPerson.getEntityIdentifier());
-    }
+		assertSame(baselineContext, this.person.getSecurityContext());
+	}
 
-    /**
-     * Test that the setAttribute() method of RestrictedPerson writes through to the underlying
-     * IPerson.
-     */
-    public void testSetAttribute() {
+	/**
+	 * Test that the getEntityIdentifier() method of RestrictedPerson reads through
+	 * to the underlying IPerson's entity identifier.
+	 */
+	public void testGetEntityIdentifier() {
+		assertNotNull(this.person.getEntityIdentifier());
+		assertSame(this.person.getEntityIdentifier(), this.restrictedPerson.getEntityIdentifier());
+	}
 
-        // test that new attributes write
+	/**
+	 * Test that the setAttribute() method of RestrictedPerson writes through to the
+	 * underlying IPerson.
+	 */
+	public void testSetAttribute() {
 
-        assertNull(this.person.getAttribute("notSet"));
-        assertNull(this.restrictedPerson.getAttribute("notSet"));
+		// test that new attributes write
 
-        this.restrictedPerson.setAttribute("notSet", "nowSet");
+		assertNull(this.person.getAttribute("notSet"));
+		assertNull(this.restrictedPerson.getAttribute("notSet"));
 
-        assertEquals("nowSet", this.person.getAttribute("notSet"));
-        assertEquals("nowSet", this.restrictedPerson.getAttribute("notSet"));
+		this.restrictedPerson.setAttribute("notSet", "nowSet");
 
-        // test that existing attribute are overwritten
+		assertEquals("nowSet", this.person.getAttribute("notSet"));
+		assertEquals("nowSet", this.restrictedPerson.getAttribute("notSet"));
 
-        assertEquals("val1", this.person.getAttribute("att1"));
-        assertEquals("val1", this.restrictedPerson.getAttribute("att1"));
+		// test that existing attribute are overwritten
 
-        this.restrictedPerson.setAttribute("att1", "newValue");
+		assertEquals("val1", this.person.getAttribute("att1"));
+		assertEquals("val1", this.restrictedPerson.getAttribute("att1"));
 
-        assertEquals("newValue", this.person.getAttribute("att1"));
-        assertEquals("newValue", this.restrictedPerson.getAttribute("att1"));
-    }
+		this.restrictedPerson.setAttribute("att1", "newValue");
 
-    /**
-     * Test that the setFullName method of RestrictedPerson writes through to the underlying
-     * IPerson.
-     */
-    public void testSetFullname() {
-        assertEquals("George Washington", this.restrictedPerson.getFullName());
-        assertEquals("George Washington", this.person.getFullName());
+		assertEquals("newValue", this.person.getAttribute("att1"));
+		assertEquals("newValue", this.restrictedPerson.getAttribute("att1"));
+	}
 
-        this.restrictedPerson.setFullName("Peter Furmonavicius");
+	/**
+	 * Test that the setFullName method of RestrictedPerson writes through to the
+	 * underlying IPerson.
+	 */
+	public void testSetFullname() {
+		assertEquals("George Washington", this.restrictedPerson.getFullName());
+		assertEquals("George Washington", this.person.getFullName());
 
-        assertEquals("Peter Furmonavicius", this.restrictedPerson.getFullName());
-        assertEquals("Peter Furmonavicius", this.person.getFullName());
-    }
+		this.restrictedPerson.setFullName("Peter Furmonavicius");
 
-    /** Test that the RestrictedPerson setID method writes through to the underlying IPerson. */
-    public void testSetID() {
-        assertEquals(27, this.person.getID());
-        assertEquals(27, this.restrictedPerson.getID());
+		assertEquals("Peter Furmonavicius", this.restrictedPerson.getFullName());
+		assertEquals("Peter Furmonavicius", this.person.getFullName());
+	}
 
-        this.restrictedPerson.setID(12);
+	/**
+	 * Test that the RestrictedPerson setID method writes through to the underlying
+	 * IPerson.
+	 */
+	public void testSetID() {
+		assertEquals(27, this.person.getID());
+		assertEquals(27, this.restrictedPerson.getID());
 
-        assertEquals(12, this.person.getID());
-        assertEquals(12, this.restrictedPerson.getID());
-    }
+		this.restrictedPerson.setID(12);
 
-    /**
-     * A dummy ISecurityContext implementation. Useful as a non-null ISecurityContext, but otherwise
-     * no methods do anything.
-     */
-    private static class DummySecurityContext implements ISecurityContext {
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getAuthType()
-         */
-        @Override
-        public int getAuthType() {
-            return 0;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getPrincipalInstance()
-         */
-        @Override
-        public IPrincipal getPrincipalInstance() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
-         */
-        @Override
-        public IOpaqueCredentials getOpaqueCredentialsInstance() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#authenticate()
-         */
-        @Override
-        public void authenticate() throws PortalSecurityException {
-            // do nothing -- dummy implementation
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getPrincipal()
-         */
-        @Override
-        public IPrincipal getPrincipal() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentials()
-         */
-        @Override
-        public IOpaqueCredentials getOpaqueCredentials() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getAdditionalDescriptor()
-         */
-        @Override
-        public IAdditionalDescriptor getAdditionalDescriptor() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#isAuthenticated()
-         */
-        @Override
-        public boolean isAuthenticated() {
-            return false;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getSubContext(java.lang.String)
-         */
-        @Override
-        public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getSubContexts()
-         */
-        @Override
-        public Enumeration getSubContexts() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#getSubContextNames()
-         */
-        @Override
-        public Enumeration getSubContextNames() {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.apereo.portal.security.ISecurityContext#addSubContext(java.lang.String, org.apereo.portal.security.ISecurityContext)
-         */
-        @Override
-        public void addSubContext(String name, ISecurityContext ctx)
-                throws PortalSecurityException {
-            // do nothing -- dummy implementation
-        }
-    }
+		assertEquals(12, this.person.getID());
+		assertEquals(12, this.restrictedPerson.getID());
+	}
 }

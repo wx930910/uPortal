@@ -16,16 +16,19 @@ package org.apereo.portal.io.xml.crn;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apereo.portal.io.xml.XmlTestException;
 import org.apereo.portal.utils.Tuple;
 import org.apereo.portal.xml.XmlUtilitiesImpl;
@@ -36,113 +39,93 @@ import org.junit.Test;
 
 public class AbstractDom4jImporterExporterTest {
 
-    @Test
-    public void testDom4jRoundTripWithComment() throws Exception {
-        final TestDom4jImporter importer = new TestDom4jImporter();
-        final TestDom4jExporter exporter = new TestDom4jExporter();
-        exporter.setXmlUtilities(new XmlUtilitiesImpl());
+	public static AbstractDom4jExporter mockAbstractDom4jExporter1() {
+		AbstractDom4jExporter mockInstance = spy(AbstractDom4jExporter.class);
+		return mockInstance;
+	}
 
-        final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        final InputStream resource =
-                this.getClass()
-                        .getResourceAsStream(
-                                "/org/apereo/portal/io/xml/crn/pilot-lo.fragment-layout.xml");
-        final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(resource);
-        final Tuple<String, Element> result = importer.unmarshal(new StAXSource(xmlEventReader));
+	public static AbstractDom4jImporter mockAbstractDom4jImporter1() {
+		AbstractDom4jImporter mockInstance = spy(AbstractDom4jImporter.class);
+		return mockInstance;
+	}
 
-        assertNotNull(result);
+	@Test
+	public void testDom4jRoundTripWithComment() throws Exception {
+		final AbstractDom4jImporter importer = AbstractDom4jImporterExporterTest.mockAbstractDom4jImporter1();
+		final AbstractDom4jExporter exporter = AbstractDom4jImporterExporterTest.mockAbstractDom4jExporter1();
+		exporter.setXmlUtilities(new XmlUtilitiesImpl());
 
-        final StringWriter writer = new StringWriter();
-        exporter.marshal(result, new StreamResult(writer));
+		final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+		final InputStream resource = this.getClass()
+				.getResourceAsStream("/org/apereo/portal/io/xml/crn/pilot-lo.fragment-layout.xml");
+		final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(resource);
+		final Tuple<String, Element> result = importer.unmarshal(new StAXSource(xmlEventReader));
 
-        final String marshalResult = writer.toString();
+		assertNotNull(result);
 
-        assertNotNull(marshalResult);
+		final StringWriter writer = new StringWriter();
+		exporter.marshal(result, new StreamResult(writer));
 
-        XMLUnit.setIgnoreWhitespace(true);
-        try {
-            Diff d =
-                    new Diff(
-                            new InputStreamReader(
-                                    this.getClass()
-                                            .getResourceAsStream(
-                                                    "/org/apereo/portal/io/xml/crn/pilot-lo.fragment-layout.xml")),
-                            new StringReader(marshalResult));
-            assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());
-        } catch (Exception e) {
-            throw new XmlTestException(
-                    "Failed to assert similar between marshall output and expected XML",
-                    marshalResult,
-                    e);
-        } catch (Error e) {
-            throw new XmlTestException(
-                    "Failed to assert similar between marshall output and expected XML",
-                    marshalResult,
-                    e);
-        }
-    }
+		final String marshalResult = writer.toString();
 
-    @Test
-    public void testDom4jCommentFiltering() throws Exception {
-        final TestDom4jImporter importer = new TestDom4jImporter();
-        final TestDom4jExporter exporter = new TestDom4jExporter();
-        exporter.setXmlUtilities(new XmlUtilitiesImpl());
+		assertNotNull(marshalResult);
 
-        final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        final InputStream resource =
-                this.getClass()
-                        .getResourceAsStream(
-                                "/org/apereo/portal/io/xml/crn/pilot-lo.fragment-layout.xml");
-        final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(resource);
-        final Tuple<String, Element> result = importer.unmarshal(new StAXSource(xmlEventReader));
+		XMLUnit.setIgnoreWhitespace(true);
+		try {
+			Diff d = new Diff(
+					new InputStreamReader(this.getClass()
+							.getResourceAsStream("/org/apereo/portal/io/xml/crn/pilot-lo.fragment-layout.xml")),
+					new StringReader(marshalResult));
+			assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());
+		} catch (Exception e) {
+			throw new XmlTestException("Failed to assert similar between marshall output and expected XML",
+					marshalResult, e);
+		} catch (Error e) {
+			throw new XmlTestException("Failed to assert similar between marshall output and expected XML",
+					marshalResult, e);
+		}
+	}
 
-        assertNotNull(result);
+	@Test
+	public void testDom4jCommentFiltering() throws Exception {
+		final AbstractDom4jImporter importer = AbstractDom4jImporterExporterTest.mockAbstractDom4jImporter1();
+		final AbstractDom4jExporter exporter = AbstractDom4jImporterExporterTest.mockAbstractDom4jExporter1();
+		exporter.setXmlUtilities(new XmlUtilitiesImpl());
 
-        final Element document = result.getSecond();
-        final List<org.dom4j.Node> comments = document.selectNodes("//comment()");
-        for (final org.dom4j.Node comment : comments) {
-            comment.detach();
-        }
+		final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+		final InputStream resource = this.getClass()
+				.getResourceAsStream("/org/apereo/portal/io/xml/crn/pilot-lo.fragment-layout.xml");
+		final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(resource);
+		final Tuple<String, Element> result = importer.unmarshal(new StAXSource(xmlEventReader));
 
-        final StringWriter writer = new StringWriter();
-        exporter.marshal(result, new StreamResult(writer));
+		assertNotNull(result);
 
-        final String marshalResult = writer.toString();
+		final Element document = result.getSecond();
+		final List<org.dom4j.Node> comments = document.selectNodes("//comment()");
+		for (final org.dom4j.Node comment : comments) {
+			comment.detach();
+		}
 
-        assertNotNull(marshalResult);
+		final StringWriter writer = new StringWriter();
+		exporter.marshal(result, new StreamResult(writer));
 
-        XMLUnit.setIgnoreWhitespace(true);
-        try {
-            Diff d =
-                    new Diff(
-                            new InputStreamReader(
-                                    this.getClass()
-                                            .getResourceAsStream(
-                                                    "/org/apereo/portal/io/xml/crn/filtered-pilot-lo.fragment-layout.xml")),
-                            new StringReader(marshalResult));
-            assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());
-        } catch (Exception e) {
-            throw new XmlTestException(
-                    "Failed to assert similar between marshall output and expected XML",
-                    marshalResult,
-                    e);
-        } catch (Error e) {
-            throw new XmlTestException(
-                    "Failed to assert similar between marshall output and expected XML",
-                    marshalResult,
-                    e);
-        }
-    }
+		final String marshalResult = writer.toString();
 
-    private static class TestDom4jImporter extends AbstractDom4jImporter {
-        @Override
-        protected void importDataElement(Tuple<String, Element> data) {}
-    }
+		assertNotNull(marshalResult);
 
-    private static class TestDom4jExporter extends AbstractDom4jExporter {
-        @Override
-        protected Element exportDataElement(String id) {
-            return null;
-        }
-    }
+		XMLUnit.setIgnoreWhitespace(true);
+		try {
+			Diff d = new Diff(
+					new InputStreamReader(this.getClass().getResourceAsStream(
+							"/org/apereo/portal/io/xml/crn/filtered-pilot-lo.fragment-layout.xml")),
+					new StringReader(marshalResult));
+			assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());
+		} catch (Exception e) {
+			throw new XmlTestException("Failed to assert similar between marshall output and expected XML",
+					marshalResult, e);
+		} catch (Error e) {
+			throw new XmlTestException("Failed to assert similar between marshall output and expected XML",
+					marshalResult, e);
+		}
+	}
 }

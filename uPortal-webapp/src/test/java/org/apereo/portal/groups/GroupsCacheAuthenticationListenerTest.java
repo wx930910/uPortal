@@ -15,45 +15,45 @@
 package org.apereo.portal.groups;
 
 import java.util.Collections;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 public class GroupsCacheAuthenticationListenerTest {
 
-    @Test
-    public void testUserAuthenticated() {
+	@Test
+	public void testUserAuthenticated() throws GroupsException {
 
-        final IPerson person = PersonFactory.createPerson();
-        person.setAttribute(IPerson.USERNAME, "mock.person");
+		final IPerson person = PersonFactory.createPerson();
+		person.setAttribute(IPerson.USERNAME, "mock.person");
 
-        final IEntityGroup group = new MockEntityGroup("mock.group", IPerson.class);
+		final IEntityGroup group = MockEntityGroup.mockIEntityGroup1("mock.group", IPerson.class);
 
-        final CacheManager cacheManager = CacheManager.getInstance();
+		final CacheManager cacheManager = CacheManager.getInstance();
 
-        final Cache parentGroupsCache = new Cache("parentGroupsCache", 100, false, false, 0, 0);
-        cacheManager.addCache(parentGroupsCache);
-        parentGroupsCache.put(
-                new Element(person.getEntityIdentifier(), Collections.singleton(group)));
+		final Cache parentGroupsCache = new Cache("parentGroupsCache", 100, false, false, 0, 0);
+		cacheManager.addCache(parentGroupsCache);
+		parentGroupsCache.put(new Element(person.getEntityIdentifier(), Collections.singleton(group)));
 
-        final Cache childrenCache = new Cache("childrenCache", 100, false, false, 0, 0);
-        cacheManager.addCache(childrenCache);
-        childrenCache.put(new Element(group.getUnderlyingEntityIdentifier(), new Object()));
+		final Cache childrenCache = new Cache("childrenCache", 100, false, false, 0, 0);
+		cacheManager.addCache(childrenCache);
+		childrenCache.put(new Element(group.getUnderlyingEntityIdentifier(), new Object()));
 
-        Assert.assertEquals(parentGroupsCache.getSize(), 1);
-        Assert.assertEquals(childrenCache.getSize(), 1);
+		Assert.assertEquals(parentGroupsCache.getSize(), 1);
+		Assert.assertEquals(childrenCache.getSize(), 1);
 
-        final LocalGroupsCacheAuthenticationListener listener =
-                new LocalGroupsCacheAuthenticationListener();
-        listener.setParentGroupsCache(parentGroupsCache);
-        listener.setChildrenCache(childrenCache);
-        listener.userAuthenticated(person);
+		final LocalGroupsCacheAuthenticationListener listener = new LocalGroupsCacheAuthenticationListener();
+		listener.setParentGroupsCache(parentGroupsCache);
+		listener.setChildrenCache(childrenCache);
+		listener.userAuthenticated(person);
 
-        Assert.assertEquals(parentGroupsCache.getSize(), 0);
-        Assert.assertEquals(childrenCache.getSize(), 0);
-    }
+		Assert.assertEquals(parentGroupsCache.getSize(), 0);
+		Assert.assertEquals(childrenCache.getSize(), 0);
+	}
 }
